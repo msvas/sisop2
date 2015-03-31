@@ -8,7 +8,7 @@ int main (int argc, char *argv[])
     matrixOne = readFile("in1.txt");
     matrixTwo = readFile("in2.txt");
     
-    multiplyMatrixes(matrixOne, matrixTwo);
+    multiplyMatrixes(matrixOne, matrixTwo, atoi(argv[argc-1]));
     return 0;
 }
 

@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 typedef struct Matrix
 {
@@ -13,9 +14,10 @@ typedef struct Matrix
 
 
 void printMatrix(MATRIX matrix);
-MATRIX multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo);
+void multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n);
 int multOneLineOneCol(int line, int col, MATRIX matrixOne, MATRIX matrixTwo);
-void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, MATRIX *matrixResult);
-void multAll(MATRIX matrixOne, MATRIX matrixTwo, MATRIX *matrixResult);
+void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo);
+void multAll(MATRIX matrixOne, MATRIX matrixTwo, int n);
+int findN(int value);
 
 #endif

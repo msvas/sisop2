@@ -15,44 +15,42 @@ void printMatrix(MATRIX matrix)
     }
 }
 
-MATRIX multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
+void multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
 {
-    MATRIX *matrixResult;
     int i;
     
-    *(matrixResult->elements) = malloc(matrixOne.lines * matrixTwo.cols * sizeof(int));
-    matrixResult->lines = matrixOne.lines;
-    matrixResult->cols = matrixTwo.cols;
-    
     manageSM(matrixOne.lines * matrixTwo.cols * sizeof(int));    
-    multAll(matrixOne, matrixTwo, matrixResult);
+    multAll(matrixOne, matrixTwo, n);
     
-    printMatrix(*matrixResult);
-    
-    return *matrixResult;
+    //printMatrix(*matrixResult);
 }
 
-void multAll(MATRIX matrixOne, MATRIX matrixTwo, MATRIX  *matrixResult, int n)
+void multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
 {
-    int i, linesPerProc;
+    int i, j, linesPerProc;
     
-    linesPerProc = ceil(matrixOne.lines / n);
     
-    for(i = 0; i < 
+    printf("n: %i\n", findN(n));
+    //linesPerProc = ceil(matrixOne.lines / n);
     
-        multOneLine(i, matrixOne, matrixTwo, matrixResult);
+    for(j = 0; j < matrixOne.lines; j++)
+    {
+        for(i = 0; i < n; i++)
+        {
+            //multOneLine(i, matrixOne, matrixTwo, matrixResult);
+        }
     }
 }
 
-void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, MATRIX *matrixResult)
+void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo)
 {
     int i, j, sumResult;
     
-    i = (line * matrixResult->cols);
+    i = (line * matrixTwo.cols);
     for(j = 0; j < matrixTwo.cols; j++)
     {
         sumResult = multOneLineOneCol(line, j, matrixOne, matrixTwo);
-        matrixResult->elements[i + j] = sumResult;
+        //matrixResult->elements[i + j] = sumResult;
     }
 }
 
@@ -67,4 +65,16 @@ int multOneLineOneCol(int line, int col, MATRIX matrixOne, MATRIX matrixTwo)
     }
     
     return finalSum;
+}
+
+int findN(int value)
+{
+    int i = 0;
+    
+    while(value != 1)
+    {
+        value = value / 2;
+        i++;
+    }
+    return i;
 }

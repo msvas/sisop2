@@ -1,6 +1,6 @@
 #include "communication.h"
 
-int smid;
+int smid, *baseAddress;
 
 int manageSM(int smSize)
 {
@@ -15,7 +15,7 @@ int *smAttach(int line, int col, int totalCol, int *memAddr)
     int *smMatrix;
     
     memPos = ((line * totalCol) + col) * sizeof(int);
-    smMatrix = (int *) shmat(smid, (memAddr + memPos), 0);
+    smMatrix = (int *) shmat(smid, 0, 0);
     
     return smMatrix;
 }

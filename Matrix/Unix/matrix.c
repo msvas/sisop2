@@ -17,20 +17,26 @@ void printMatrix(MATRIX matrix)
 
 void multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
 {
-    int i;
     
-    manageSM(matrixOne.lines * matrixTwo.cols * sizeof(int));    
-    multAll(matrixOne, matrixTwo, n);
+    manageSM(matrixOne.lines * matrixTwo.cols * sizeof(int));  
+    multAll(matrixOne, matrixTwo, findN(n));
     
     //printMatrix(*matrixResult);
 }
 
-void multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
+MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int nProcs)
 {
-    int i, j, linesPerProc;
+    int i, j, k;
+    MATRIX matrixResult;
+    pid_t pid;
     
+    matrixResult.elements = malloc(matrixOne.lines * matrixTwo.cols * sizeof(int));
     
-    printf("n: %i\n", findN(n));
+    for(k = 0; k < nProcs; k++)
+    {
+        pid = fork();
+    }
+    
     //linesPerProc = ceil(matrixOne.lines / n);
     
     for(j = 0; j < matrixOne.lines; j++)
@@ -40,6 +46,8 @@ void multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
             //multOneLine(i, matrixOne, matrixTwo, matrixResult);
         }
     }
+    
+    return matrixResult;
 }
 
 void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo)

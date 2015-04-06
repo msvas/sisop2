@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <sys/types.h>
-#include <sys/wait.h> 
+#include <sys/wait.h>
+#include "communication.h"
 
 typedef struct Matrix
 {
@@ -18,8 +19,8 @@ typedef struct Matrix
 void printMatrix(MATRIX matrix);
 void multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n);
 int multOneLineOneCol(int line, int col, MATRIX matrixOne, MATRIX matrixTwo);
-void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo);
-MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int nProcs);
+void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, BUFFER postBox);
+MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n);
 int findN(int value);
 
 #endif

@@ -1,27 +1,30 @@
 #include "communication.h"
 
-int smid, *baseAddress;
+int mqid;
+BUFFER auxBuffer;
 
-int manageSM(int smSize)
+int manageMQ()
 {
-    smid = shmget(IPC_PRIVATE, smSize, S_IRUSR | S_IWUSR);
+    key_t key;
+    
+    key = ftok(".", 'm');
+    mqid = msgget(key, IPC_CREAT | 0644);
 
-    return smid;
+    return mqid;
 }
 
-int *smAttach(int line, int col, int totalCol, int *memAddr)
+void sendMessage(BUFFER postBox)
 {
-    int memPos;
-    int *smMatrix;
+    auxBuffer.mtype = postBox.mtype;
     
-    memPos = ((line * totalCol) + col) * sizeof(int);
-    smMatrix = (int *) shmat(smid, 0, 0);
     
-    return smMatrix;
+    if(msgsnd(mqid, &auxBuffer, sizeof(BUFFER), 0)==-1) {
+        printf("Oh dear, something went wrong! %s\n", strerror(errno));
+    }
 }
 
-void dettDestroy(int *smMatrix)
-{
-    shmdt(smMatrix);
-    shmctl(smid, IPC_RMID, NULL); 
+int *rcvMessage(int line)
+{    
+    //printf("%i\n", msgrcv(mqid, &auxBuffer, sizeof(auxBuffer), 0,  0));
+    return auxBuffer.lineResult;
 }

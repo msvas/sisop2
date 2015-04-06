@@ -17,48 +17,75 @@ void printMatrix(MATRIX matrix)
 
 void multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
 {
+    MATRIX matrixResult;
     
-    manageSM(matrixOne.lines * matrixTwo.cols * sizeof(int));  
-    multAll(matrixOne, matrixTwo, findN(n));
+    manageMQ();
+    matrixResult = multAll(matrixOne, matrixTwo, n);
     
-    //printMatrix(*matrixResult);
+    printMatrix(matrixResult);
 }
 
-MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int nProcs)
+MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
 {
     int i, j, k;
+    int procInterval, linesPerProc;
     MATRIX matrixResult;
-    pid_t pid;
+    pid_t pid[n];
+    BUFFER postBox[n];
     
     matrixResult.elements = malloc(matrixOne.lines * matrixTwo.cols * sizeof(int));
+    matrixResult.lines = matrixOne.lines;
+    matrixResult.cols = matrixTwo.cols;
+    linesPerProc = ceil(matrixOne.lines / n);
     
-    for(k = 0; k < nProcs; k++)
+    //printf("%i, %i\n", matrixOne.lines, n);
+    
+    for(k = 0; k < n; k++)
+        pid[k] = 1;
+    
+    if (!linesPerProc)
+        linesPerProc = 1;
+        
+    procInterval = -linesPerProc;
+    k = 0;
+    while((k < n) && pid[k] != 0)
     {
-        pid = fork();
+        k++;
+        procInterval += linesPerProc;
+        pid[k] = fork();
     }
     
-    //linesPerProc = ceil(matrixOne.lines / n);
-    
-    for(j = 0; j < matrixOne.lines; j++)
+    if(pid[k] == 0)
     {
-        for(i = 0; i < n; i++)
+        for(j = procInterval; (j < (procInterval + linesPerProc)) && (j < matrixOne.lines); j++)
         {
-            //multOneLine(i, matrixOne, matrixTwo, matrixResult);
+            (postBox[n]).lineResult = malloc(matrixTwo.cols * sizeof(int));
+            (postBox[n]).mtype = j;
+            multOneLine(j, matrixOne, matrixTwo, postBox[n]);
+            sendMessage(postBox[n]);
         }
+        exit(0);
+    }
+    else
+        for(k = 0; k < n; k++)
+            waitpid(pid[n], 0, 0);
+    
+    for(i = 0; i < matrixResult.lines; i++)
+    {
+        matrixResult.elements[(i * matrixResult.cols)] = rcvMessage(i);
     }
     
     return matrixResult;
-}
+}    
 
-void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo)
+void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, BUFFER postBox)
 {
-    int i, j, sumResult;
+    int j, sumResult;
     
-    i = (line * matrixTwo.cols);
     for(j = 0; j < matrixTwo.cols; j++)
     {
         sumResult = multOneLineOneCol(line, j, matrixOne, matrixTwo);
-        //matrixResult->elements[i + j] = sumResult;
+        postBox.lineResult[j] = sumResult;
     }
 }
 

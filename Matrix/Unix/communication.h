@@ -3,11 +3,19 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/shm.h>
-#include <sys/stat.h> 
+#include <sys/msg.h>
+#include <sys/types.h>
+#include <string.h>
+#include <errno.h>
 
-int manageSM(int smSize);
-int *smAttach(int line, int col, int totalCol, int *memAddr);
-void dettDestroy(int *smMatrix);
+typedef struct mBuffer
+{
+    int mtype;
+    int *lineResult;
+} BUFFER;
+
+int manageMQ();
+void sendMessage(BUFFER postBox);
+int *rcvMessage(int line);
 
 #endif

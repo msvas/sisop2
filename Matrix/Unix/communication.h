@@ -14,8 +14,8 @@ typedef struct mBuffer
     int *lineResult;
 } BUFFER;
 
-int manageMQ();
+int manageMQ(int cols);
 void sendMessage(BUFFER postBox);
-int *rcvMessage(int line);
+int *rcvMessage(int line, BUFFER postBox, int cols);
 
 #endif

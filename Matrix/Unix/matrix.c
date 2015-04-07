@@ -19,7 +19,7 @@ void multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
 {
     MATRIX matrixResult;
     
-    manageMQ();
+    manageMQ(matrixTwo.cols);
     matrixResult = multAll(matrixOne, matrixTwo, n);
     
     printMatrix(matrixResult);
@@ -60,8 +60,8 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
         for(j = procInterval; (j < (procInterval + linesPerProc)) && (j < matrixOne.lines); j++)
         {
             (postBox[n]).lineResult = malloc(matrixTwo.cols * sizeof(int));
-            (postBox[n]).mtype = j;
-            multOneLine(j, matrixOne, matrixTwo, postBox[n]);
+            (postBox[n]).mtype = j + 1;
+            multOneLine(j, matrixOne, matrixTwo, &(postBox[n]));
             sendMessage(postBox[n]);
         }
         exit(0);
@@ -72,20 +72,20 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
     
     for(i = 0; i < matrixResult.lines; i++)
     {
-        matrixResult.elements[(i * matrixResult.cols)] = rcvMessage(i);
+        matrixResult.elements[(i * matrixResult.cols)] = rcvMessage(i, postBox[0], matrixResult.cols);
     }
     
     return matrixResult;
 }    
 
-void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, BUFFER postBox)
+void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, BUFFER *postBox)
 {
     int j, sumResult;
     
     for(j = 0; j < matrixTwo.cols; j++)
     {
         sumResult = multOneLineOneCol(line, j, matrixOne, matrixTwo);
-        postBox.lineResult[j] = sumResult;
+        postBox->lineResult[j] = sumResult;
     }
 }
 

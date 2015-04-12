@@ -11,11 +11,11 @@
 typedef struct mBuffer
 {
     int mtype;
-    int *lineResult;
+    int lineResult[2];
 } BUFFER;
 
 int manageMQ(int cols);
 void sendMessage(BUFFER postBox);
-int *rcvMessage(int line, BUFFER postBox, int cols);
+void rcvMessage(BUFFER *postBox);
 
 #endif

@@ -36,9 +36,9 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
     matrixResult.elements = malloc(matrixOne.lines * matrixTwo.cols * sizeof(int));
     matrixResult.lines = matrixOne.lines;
     matrixResult.cols = matrixTwo.cols;
-    linesPerProc = ceil(matrixOne.lines / n);
+    linesPerProc = ceil((double) matrixOne.lines / n);
     
-    //printf("%i, %i\n", matrixOne.lines, n);
+    //printf("%i, %i, %i\n", matrixOne.lines, n, linesPerProc);
     
     for(k = 0; k < n; k++)
         pid[k] = 1;
@@ -59,20 +59,19 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
     {
         for(j = procInterval; (j < (procInterval + linesPerProc)) && (j < matrixOne.lines); j++)
         {
-            (postBox[n]).lineResult = malloc(matrixTwo.cols * sizeof(int));
-            (postBox[n]).mtype = j + 1;
+            (postBox[n]).lineResult[0] = j;
             multOneLine(j, matrixOne, matrixTwo, &(postBox[n]));
-            sendMessage(postBox[n]);
         }
         exit(0);
     }
     else
         for(k = 0; k < n; k++)
             waitpid(pid[n], 0, 0);
-    
-    for(i = 0; i < matrixResult.lines; i++)
+        
+    for(i = 0; i < matrixResult.lines * matrixResult.cols; i++)
     {
-        matrixResult.elements[(i * matrixResult.cols)] = rcvMessage(i, postBox[0], matrixResult.cols);
+        rcvMessage(&(postBox[0]));
+        matrixResult.elements[(postBox[0].lineResult[0] * matrixResult.cols) + postBox[0].lineResult[1]] = postBox[0].mtype;
     }
     
     return matrixResult;
@@ -85,7 +84,9 @@ void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, BUFFER *postBox)
     for(j = 0; j < matrixTwo.cols; j++)
     {
         sumResult = multOneLineOneCol(line, j, matrixOne, matrixTwo);
-        postBox->lineResult[j] = sumResult;
+        postBox->lineResult[1] = j;
+        postBox->mtype = sumResult;
+        sendMessage(*postBox);
     }
 }
 

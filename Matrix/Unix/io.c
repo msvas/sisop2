@@ -3,12 +3,14 @@
 
 int main (int argc, char *argv[])
 {
-    MATRIX matrixOne, matrixTwo;
+    MATRIX matrixOne, matrixTwo, matrixResult;
     
     matrixOne = readFile("in1.txt");
     matrixTwo = readFile("in2.txt");
     
-    multiplyMatrixes(matrixOne, matrixTwo, atoi(argv[argc-1]));
+    matrixResult = multiplyMatrixes(matrixOne, matrixTwo, atoi(argv[argc-1]));
+    writeFile(matrixResult);
+    
     return 0;
 }
 
@@ -52,6 +54,31 @@ MATRIX readMatrix(FILE *matrixFile, int totalLines, int totalCols)
     }
     
     return matrix;
+}
+
+int writeFile(MATRIX matrix)
+{
+    FILE *matrixFile;
+    int i, j;
+    
+    matrixFile = fopen("out.txt", "w");
+    fprintf(matrixFile, "LINHAS = %i\n", matrix.lines);
+    fprintf(matrixFile, "COLUNAS = %i\n", matrix.cols);
+    
+    for(i = 0; i <  matrix.lines; i++)
+    {
+        for(j = 0; j <  matrix.cols; j++)
+        {
+            if(j == (matrix.cols - 1))
+                fprintf(matrixFile, "%i\n", matrix.elements[(i * matrix.cols) + j]);
+            else
+                fprintf(matrixFile, "%i ", matrix.elements[(i * matrix.cols) + j]);
+        }
+    }
+    
+    //printMatrix(matrix);
+    
+    fclose(matrixFile);
 }
 
 MATRIX readFile (char fileName[10])

@@ -17,7 +17,7 @@ typedef struct Matrix
 
 
 void printMatrix(MATRIX matrix);
-void multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n);
+MATRIX multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n);
 int multOneLineOneCol(int line, int col, MATRIX matrixOne, MATRIX matrixTwo);
 void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, BUFFER *postBox);
 MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n);

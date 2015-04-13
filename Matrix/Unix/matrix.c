@@ -15,7 +15,7 @@ void printMatrix(MATRIX matrix)
     }
 }
 
-void multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
+MATRIX multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
 {
     MATRIX matrixResult;
     
@@ -23,6 +23,8 @@ void multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
     matrixResult = multAll(matrixOne, matrixTwo, n);
     
     printMatrix(matrixResult);
+    
+    return matrixResult;
 }
 
 MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
@@ -59,8 +61,9 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
     {
         for(j = procInterval; (j < (procInterval + linesPerProc)) && (j < matrixOne.lines); j++)
         {
-            (postBox[n]).lineResult[0] = j;
-            multOneLine(j, matrixOne, matrixTwo, &(postBox[n]));
+            (postBox[k]).lineResult[0] = j;
+            multOneLine(j, matrixOne, matrixTwo, &(postBox[k]));
+            //printf("Processo: %i, Intervalo: %i\n", k, procInterval);
         }
         exit(0);
     }

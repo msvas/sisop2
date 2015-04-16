@@ -13,12 +13,21 @@ typedef struct Matrix
     int *elements;
     int lines;
     int cols;
-} MATRIX;  
+} MATRIX;
+
+typedef struct thread_data{
+    int  procInterval;
+    int  linesPerProc;
+    MATRIX matrixOne;
+    MATRIX matrixTwo;
+    BUFFER postBox;
+} THREAD_DATA;
 
 
 void printMatrix(MATRIX matrix);
 MATRIX multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n);
 int multOneLineOneCol(int line, int col, MATRIX matrixOne, MATRIX matrixTwo);
+void *threadMultiply(void *threadarg);
 void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, BUFFER *postBox);
 MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n);
 int findN(int value);

@@ -4,13 +4,22 @@
 int main (int argc, char *argv[])
 {
     MATRIX matrixOne, matrixTwo, matrixResult;
+    int intArg;
     
-    matrixOne = readFile("in1.txt");
-    matrixTwo = readFile("in2.txt");
+    intArg = atoi(argv[argc-1]);
     
-    matrixResult = multiplyMatrixes(matrixOne, matrixTwo, atoi(argv[argc-1]));
-    writeFile(matrixResult);
+    if(intArg > 0)
+    {
+        matrixOne = readFile("in1.txt");
+        matrixTwo = readFile("in2.txt");
+
+        matrixResult = multiplyMatrixes(matrixOne, matrixTwo, intArg);
+        writeFile(matrixResult);
+    }
+    else
+        randomMatrix(1000, 1000);
     
+    printf("Elapsed time: %f\n", (float)clock() / CLOCKS_PER_SEC);
     return 0;
 }
 
@@ -96,3 +105,29 @@ MATRIX readFile (char fileName[10])
     fclose(matrixFile);
     return matrix;
 }
+
+void randomMatrix (int lines, int cols)
+{
+    FILE *matrixFile;
+    int i, j;
+    
+    matrixFile = fopen("out.txt", "w");
+    fprintf(matrixFile, "LINHAS = %i\n", lines);
+    fprintf(matrixFile, "COLUNAS = %i\n", cols);
+    
+    for(i = 0; i <  lines; i++)
+    {
+        for(j = 0; j <  cols; j++)
+        {
+            if(j == (cols - 1))
+                fprintf(matrixFile, "%i\n", rand() % 1000);
+            else
+                fprintf(matrixFile, "%i ", rand() % 1000);
+        }
+    }
+    
+    //printMatrix(matrix);
+    
+    fclose(matrixFile);
+}
+    

@@ -22,7 +22,7 @@ MATRIX multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
     manageMQ(matrixTwo.cols);
     matrixResult = multAll(matrixOne, matrixTwo, n);
     
-    printMatrix(matrixResult);
+    //printMatrix(matrixResult);
     
     return matrixResult;
 }
@@ -40,7 +40,7 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
     matrixResult.cols = matrixTwo.cols;
     linesPerProc = ceil((double) matrixOne.lines / n);
     
-    //printf("%i, %i, %i\n", matrixOne.lines, n, linesPerProc);
+    printf("%i, %i, %i\n", matrixOne.lines, n, linesPerProc);
     
     for(k = 0; k < n; k++)
         pid[k] = 1;
@@ -67,14 +67,15 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
         }
         exit(0);
     }
-    else
-        for(k = 0; k < n; k++)
-            waitpid(pid[n], 0, 0);
+    //else
+        //for(k = 0; k < n; k++)
+            //waitpid(pid[n], 0, 0);
         
     for(i = 0; i < matrixResult.lines * matrixResult.cols; i++)
     {
         rcvMessage(&(postBox[0]));
         matrixResult.elements[(postBox[0].lineResult[0] * matrixResult.cols) + postBox[0].lineResult[1]] = postBox[0].mtype;
+        //printf("%i\n", i);
     }
     
     return matrixResult;

@@ -29,11 +29,12 @@ MATRIX multiplyMatrixes(MATRIX matrixOne, MATRIX matrixTwo, int n)
 
 MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
 {
-    int i, j, k;
+    int i, k;
     int procInterval, linesPerProc;
     MATRIX matrixResult;
     pthread_t threads[n];
     BUFFER postBox[n];
+    THREAD_DATA threadParams[n]; 
     
     matrixResult.elements = malloc(matrixOne.lines * matrixTwo.cols * sizeof(int));
     matrixResult.lines = matrixOne.lines;
@@ -49,22 +50,13 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
     for(k = 0; k < n; k++)
     {
         procInterval += linesPerProc;
-        //pthread_create(&threads[k], NULL, NomeDaFunc, NULL);
+        threadParams[k].procInterval = procInterval;
+        threadParams[k].linesPerProc = linesPerProc;
+        threadParams[k].matrixOne = matrixOne;
+        threadParams[k].matrixTwo = matrixTwo;
+        threadParams[k].postBox = postBox[k];
+        pthread_create(&threads[k], NULL, threadMultiply, (void *) &threadParams[k]);
     }
-    
-    if(pid[k] == 0)
-    {
-        for(j = procInterval; (j < (procInterval + linesPerProc)) && (j < matrixOne.lines); j++)
-        {
-            (postBox[k]).lineResult[0] = j;
-            multOneLine(j, matrixOne, matrixTwo, &(postBox[k]));
-            //printf("Processo: %i, Intervalo: %i\n", k, procInterval);
-        }
-        exit(0);
-    }
-    else
-        for(k = 0; k < n; k++)
-            waitpid(pid[n], 0, 0);
         
     for(i = 0; i < matrixResult.lines * matrixResult.cols; i++)
     {
@@ -73,6 +65,22 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
     }
     
     return matrixResult;
+}
+
+void *threadMultiply(void *threadarg)
+{
+    int j;
+    THREAD_DATA *threadParams;
+    
+    threadParams = (THREAD_DATA *) threadarg;
+    
+    for(j = threadParams->procInterval; (j < (threadParams->procInterval + threadParams->linesPerProc)) && (j < threadParams->matrixOne.lines); j++)
+    {
+            threadParams->postBox.lineResult[0] = j;
+            multOneLine(j, threadParams->matrixOne, threadParams->matrixTwo, &(threadParams->postBox));
+            //printf("Intervalo: %i\n", threadParams->procInterval);
+    }
+    pthread_exit(NULL);
 }
 
 void multOneLine(int line, MATRIX matrixOne, MATRIX matrixTwo, BUFFER *postBox)

@@ -11,6 +11,6 @@ void readHeader(FILE *matrixFile, int *totalLines, int *totalCols);
 MATRIX readMatrix(FILE *matrixFile, int totalLines, int totalCols);
 MATRIX readFile (char fileName[10]);
 int writeFile(MATRIX matrix);
-void randomMatrix (int lines, int cols);
+void randomMatrix (char fileName[10], int lines, int cols);
 
 #endif

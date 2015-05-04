@@ -17,7 +17,10 @@ int main (int argc, char *argv[])
         writeFile(matrixResult);
     }
     else
-        randomMatrix(1000, 1000);
+    {
+        randomMatrix("in1.txt", 5000, 5000);
+	randomMatrix("in2.txt", 5000, 5000);
+    }
     
     printf("Elapsed time: %f\n", (float)clock() / CLOCKS_PER_SEC);
     return 0;
@@ -106,12 +109,12 @@ MATRIX readFile (char fileName[10])
     return matrix;
 }
 
-void randomMatrix (int lines, int cols)
+void randomMatrix (char fileName[10], int lines, int cols)
 {
     FILE *matrixFile;
     int i, j;
     
-    matrixFile = fopen("out.txt", "w");
+    matrixFile = fopen(fileName, "w");
     fprintf(matrixFile, "LINHAS = %i\n", lines);
     fprintf(matrixFile, "COLUNAS = %i\n", cols);
     

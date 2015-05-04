@@ -14,7 +14,7 @@ int manageMQ(int cols)
 
 void sendMessage(BUFFER postBox)
 {  
-    printf("Enviado: %i (%i, %i)\n", postBox.mtype, postBox.lineResult[0], postBox.lineResult[1]);
+    //printf("Enviado: %i (%i, %i)\n", postBox.mtype, postBox.lineResult[0], postBox.lineResult[1]);
     if(msgsnd(mqid, &postBox, sizeof(BUFFER), 0)==-1) {
         printf("Oh dear, something went wrong! %s\n", strerror(errno));
     }
@@ -29,7 +29,7 @@ void rcvMessage(BUFFER *postBox)
     if(msgrcv(mqid, postBox, sizeof(BUFFER), 0,  0)==-1) {
         printf("Oh dear, something went wrong! %s\n", strerror(errno));
     }
-    printf("Recebido: %i (%i, %i)\n", postBox->mtype, postBox->lineResult[0], postBox->lineResult[1]);
+    //printf("Recebido: %i (%i, %i)\n", postBox->mtype, postBox->lineResult[0], postBox->lineResult[1]);
 }
 
 

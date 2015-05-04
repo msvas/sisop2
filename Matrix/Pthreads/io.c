@@ -4,13 +4,25 @@
 int main (int argc, char *argv[])
 {
     MATRIX matrixOne, matrixTwo, matrixResult;
+    int intArg;
     
-    matrixOne = readFile("in1.txt");
-    matrixTwo = readFile("in2.txt");
+    intArg = atoi(argv[argc-1]);
     
-    matrixResult = multiplyMatrixes(matrixOne, matrixTwo, atoi(argv[argc-1]));
-    writeFile(matrixResult);
+    if(intArg > 0)
+    {
+        matrixOne = readFile("in1.txt");
+        matrixTwo = readFile("in2.txt");
+
+        matrixResult = multiplyMatrixes(matrixOne, matrixTwo, intArg);
+        writeFile(matrixResult);
+    }
+    else
+    {
+        randomMatrix("in1.txt", 5000, 5000);
+	randomMatrix("in2.txt", 5000, 5000);
+    }
     
+    printf("Elapsed time: %f\n", (float)clock() / CLOCKS_PER_SEC);
     return 0;
 }
 
@@ -56,6 +68,22 @@ MATRIX readMatrix(FILE *matrixFile, int totalLines, int totalCols)
     return matrix;
 }
 
+MATRIX readFile (char fileName[10])
+{
+    FILE *matrixFile;
+    int totalLines, totalCols;
+    MATRIX matrix;
+    
+    matrixFile = fopen(fileName, "r");
+    readHeader(matrixFile, &totalLines, &totalCols);
+    matrix = readMatrix(matrixFile, totalLines, totalCols);
+    
+    //printMatrix(matrix);
+    
+    fclose(matrixFile);
+    return matrix;
+}
+
 int writeFile(MATRIX matrix)
 {
     FILE *matrixFile;
@@ -81,18 +109,27 @@ int writeFile(MATRIX matrix)
     fclose(matrixFile);
 }
 
-MATRIX readFile (char fileName[10])
+void randomMatrix (char fileName[10], int lines, int cols)
 {
     FILE *matrixFile;
-    int totalLines, totalCols;
-    MATRIX matrix;
+    int i, j;
     
-    matrixFile = fopen(fileName, "r");
-    readHeader(matrixFile, &totalLines, &totalCols);
-    matrix = readMatrix(matrixFile, totalLines, totalCols);
+    matrixFile = fopen(fileName, "w");
+    fprintf(matrixFile, "LINHAS = %i\n", lines);
+    fprintf(matrixFile, "COLUNAS = %i\n", cols);
+    
+    for(i = 0; i <  lines; i++)
+    {
+        for(j = 0; j <  cols; j++)
+        {
+            if(j == (cols - 1))
+                fprintf(matrixFile, "%i\n", rand() % 1000);
+            else
+                fprintf(matrixFile, "%i ", rand() % 1000);
+        }
+    }
     
     //printMatrix(matrix);
     
     fclose(matrixFile);
-    return matrix;
 }

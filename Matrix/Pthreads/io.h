@@ -8,6 +8,8 @@
 
 void readHeader(FILE *matrixFile, int *totalLines, int *totalCols);
 MATRIX readMatrix(FILE *matrixFile, int totalLines, int totalCols);
+int writeFile(MATRIX matrix);
 MATRIX readFile (char fileName[10]);
+void randomMatrix (char fileName[10], int lines, int cols);
 
 #endif

@@ -40,7 +40,7 @@ MATRIX multAll(MATRIX matrixOne, MATRIX matrixTwo, int n)
     matrixResult.cols = matrixTwo.cols;
     linesPerProc = ceil((double) matrixOne.lines / n);
     
-    printf("%i, %i, %i\n", matrixOne.lines, n, linesPerProc);
+    //printf("%i, %i, %i\n", matrixOne.lines, n, linesPerProc);
     
     for(k = 0; k < n; k++)
         pid[k] = 1;

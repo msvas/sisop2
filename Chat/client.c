@@ -1,4 +1,5 @@
 #include "chat.h"
+#include "interface.h"
 
 #define PORT 4000
 
@@ -8,6 +9,8 @@ int main(int argc, char *argv[])
     struct sockaddr_in serv_addr;
     struct hostent *server;
     MSG *buffer;
+  
+    chatInterface(argc, argv);
     
     if (argc < 2) {
 		fprintf(stderr,"usage %s hostname\n", argv[0]);

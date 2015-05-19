@@ -1,16 +1,15 @@
 #include "chat.h"
+#include "client.h"
 #include "interface.h"
 
 #define PORT 4000
 
+int sockfd;
+
 int main(int argc, char *argv[])
 {
-    int sockfd, n;
     struct sockaddr_in serv_addr;
     struct hostent *server;
-    MSG *buffer;
-  
-    chatInterface(argc, argv);
     
     if (argc < 2) {
 		fprintf(stderr,"usage %s hostname\n", argv[0]);
@@ -23,10 +22,10 @@ int main(int argc, char *argv[])
         exit(0);
     }
     
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) 
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         printf("ERROR opening socket\n");
+    }
     
-    buffer = malloc(sizeof(MSG));
     
 	serv_addr.sin_family = AF_INET;     
 	serv_addr.sin_port = htons(PORT);    
@@ -34,28 +33,48 @@ int main(int argc, char *argv[])
 	bzero(&(serv_addr.sin_zero), 8);     
 	
     
-	if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
+    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         printf("ERROR connecting\n");
+    }
 
-    printf("Enter the message: ");
+    chatInterface(argc, argv, sockfd);
     
-    bzero(buffer, sizeof(MSG));
+    /*bzero(buffer, sizeof(MSG));
     fgets(buffer->message, sizeof(buffer->message), stdin);
     
-	/* write in the socket */
 	n = write(sockfd, buffer, sizeof(MSG));
     if (n < 0) 
 		printf("ERROR writing to socket\n");
 
-    bzero(buffer, sizeof(MSG));
-	
+	*/
 	/* read from the socket */
-    n = read(sockfd, buffer, sizeof(MSG));
+    /*n = read(sockfd, buffer, sizeof(MSG));
     if (n < 0) 
 		printf("ERROR reading from socket\n");
 
     printf("%s\n", buffer->message);
-    
+    */
 	close(sockfd);
+    return 0;
+}
+
+int writeSocket(MSG *buffer)
+{
+    int n;
+    n = write(sockfd, buffer, sizeof(MSG));
+    if (n < 0) {
+        printf("ERROR writing to socket\n");
+        return -1;
+    }
+    bzero(buffer, sizeof(MSG));
+    return 0;
+}
+
+int readSocket(MSG *buffer)
+{
+    int n;
+    n = read(sockfd, buffer, sizeof(MSG));
+    if (n < 0) 
+        printf("ERROR reading from socket\n");
     return 0;
 }

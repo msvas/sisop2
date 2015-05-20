@@ -18,7 +18,7 @@ static void enter_callback(GtkWidget *widget, GtkWidget *entry)
 
 static void destroy(GtkWidget *widget, gpointer data)
 {
-    buffer->connected = 0;
+    buffer->connected = -1;
     writeSocket(buffer);
     gtk_main_quit ();
 }
@@ -90,6 +90,7 @@ int chatInterface(int argc, char *argv[], int sock)
     gtk_entry_set_max_length (GTK_ENTRY (chatEntry), 140);
     g_signal_connect (chatEntry, "activate", G_CALLBACK (enter_callback), chatEntry);
 
+    gtk_widget_set_size_request(textview, 100, 80);
 
     gtk_container_add(GTK_CONTAINER (scrollview), textview);
     gtk_container_add(GTK_CONTAINER (avbox), scrollview);

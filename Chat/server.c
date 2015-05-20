@@ -3,26 +3,31 @@
 
 #define PORT 4000
 
-NODE *chatData;
+USERNODE *userData;
+ROOMNODE *roomsData;
 MSG *buffer;
 
 void readMessage(void *argSock) {
     int sendControl, newSock, *auxInt;
+    int closeSocket = 0;
 
     auxInt = (int *) argSock;
     newSock = *auxInt;
 
-    do {
+    while(!closeSocket)
+    {
       bzero(buffer, sizeof(MSG));
 
       sendControl = read(newSock, buffer, sizeof(MSG));
       if (sendControl < 0)
           error("ERROR reading from socket");
-      printf("Here is the message: %s\n", buffer->message);
+      printf("Here is the message: %s, %i\n", buffer->message, buffer->connected);
       //write(newSock, buffer, sizeof(MSG));
-      chatData = push(chatData, buffer);
+      if(buffer->connected == -1)
+        closeSocket = 1;
+      //userData = push(userData, buffer);
     }
-    while(buffer->connected);
+    //while(buffer->connected);
 
     close(newSock);
     pthread_exit(NULL);

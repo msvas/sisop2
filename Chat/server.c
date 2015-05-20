@@ -1,11 +1,13 @@
 #include "chat.h"
 #include "list.h"
+#include "server.h"
 
 #define PORT 4000
 
 USERNODE *userData;
 ROOMNODE *roomsData;
 MSG *buffer;
+int totalUsers;
 
 void readMessage(void *argSock) {
     int sendControl, newSock, *auxInt;
@@ -14,6 +16,8 @@ void readMessage(void *argSock) {
     auxInt = (int *) argSock;
     newSock = *auxInt;
 
+    createUser(newSock);
+
     while(!closeSocket)
     {
       bzero(buffer, sizeof(MSG));
@@ -21,7 +25,8 @@ void readMessage(void *argSock) {
       sendControl = read(newSock, buffer, sizeof(MSG));
       if (sendControl < 0)
           error("ERROR reading from socket");
-      printf("Here is the message: %s, %i\n", buffer->message, buffer->connected);
+      //printf("Here is the message: %s, %i\n", buffer->message, buffer->connected);
+      sendAllRoom();
       //write(newSock, buffer, sizeof(MSG));
       if(buffer->connected == -1)
         closeSocket = 1;
@@ -33,6 +38,42 @@ void readMessage(void *argSock) {
     pthread_exit(NULL);
 }
 
+void sendAllRoom()
+{
+  int room;
+  USERNODE *user;
+  USERNODE *current;
+
+  user = getUserByID(userData, buffer->userID);
+  room = user->roomID;
+
+  current = userData;
+
+  if(current != NULL)
+  {
+    while ((current->next != NULL))
+    {
+      if(current->roomID == room)
+      {
+        write(current->socket, buffer, sizeof(MSG));
+        printf("Enviar %i, %s\n", current->socket, buffer->message);
+      }
+      current = current->next;
+    }
+    bzero(buffer, sizeof(MSG));
+  }
+}
+
+USERNODE *createUser(int socket)
+{
+  USERNODE *newUser;
+
+  userData = pushUser(userData, totalUsers, socket);
+  totalUsers++;
+
+  return newUser;
+}
+
 int main(int argc, char *argv[])
 {
     int sock, newSock, sizeRemote;
@@ -42,6 +83,9 @@ int main(int argc, char *argv[])
     struct sockaddr_in local, remote;
 
     buffer = malloc(sizeof(MSG));
+    userData = malloc(sizeof(USERNODE));
+    roomsData = malloc(sizeof(ROOMNODE));
+    totalUsers = 0;
 
     for(i = 0; i < 5; i++) {
         threadArgs[i] = malloc(sizeof(int));

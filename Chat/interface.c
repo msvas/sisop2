@@ -35,6 +35,7 @@ static gboolean cb_timeout(gpointer textview)
     chatText = gtk_text_view_get_buffer(GTK_TEXT_VIEW (textview));
     gtk_text_buffer_get_start_iter(chatText, &iter);
     if(readSocket(buffer)) {
+      //printf("%s\n", buffer->message);
       gtk_text_buffer_insert(chatText, &iter, buffer->message, -1);
       gtk_text_buffer_insert(chatText, &iter, "\n", -1);
       bzero(buffer, sizeof(MSG));
@@ -84,7 +85,7 @@ int chatInterface(int argc, char *argv[], int sock)
     g_signal_connect (window, "destroy", G_CALLBACK (destroy), NULL);
 
     //gdk_threads_add_timeout(2300, cb_timeout, (gpointer)button);
-    gdk_threads_add_timeout(4000, cb_timeout, (gpointer)textview);
+    gdk_threads_add_timeout(1000, cb_timeout, (gpointer)textview);
 
     chatEntry = gtk_entry_new ();
     gtk_entry_set_max_length (GTK_ENTRY (chatEntry), 140);

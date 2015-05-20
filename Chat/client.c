@@ -74,9 +74,10 @@ int readSocket(MSG *buffer)
 {
     int n;
     int len = 0;
+    n = read(sockfd, buffer, sizeof(MSG));
     ioctl(sockfd, FIONREAD, &len);
     if (len > 0) {
-      n = read(sockfd, buffer, sizeof(MSG));
+      //n = read(sockfd, buffer, sizeof(MSG));
       if (n < 0)
         printf("ERROR reading from socket\n");
       return 1;

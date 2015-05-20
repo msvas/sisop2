@@ -39,7 +39,7 @@ ROOMNODE *pushRoom(ROOMNODE *head, int id) {
     return head;
 }
 
-USERNODE *pushUser(USERNODE *head, int id) {
+USERNODE *pushUser(USERNODE *head, int id, int socket) {
   USERNODE *current;
 
     if(head == NULL)
@@ -53,16 +53,33 @@ USERNODE *pushUser(USERNODE *head, int id) {
 
     current->next = malloc(sizeof(USERNODE));
     current->next->id = id;
+    current->next->socket = socket;
+    current->next->roomID = 0;
     current->next->next = NULL;
 
     return head;
 }
 
 ROOMNODE *getRoomByID(ROOMNODE *head, int id) {
+  ROOMNODE *current;
+
+    if(head == NULL)
+        return NULL;
+
+    current = head;
+
+    while ((current->next != NULL) && (current->id != id)) {
+        current = current->next;
+    }
+
+    return current;
+}
+
+USERNODE *getUserByID(USERNODE *head, int id) {
   USERNODE *current;
 
     if(head == NULL)
-        return -1;
+        return NULL;
 
     current = head;
 

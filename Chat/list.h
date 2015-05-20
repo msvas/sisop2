@@ -3,14 +3,14 @@
 
 typedef struct userNode {
     int id;
+    int roomID;
+    int socket;
     char name[20];
     struct userNode *next;
-    struct userNode *sameRoom;
 } USERNODE;
 
 typedef struct roomNode {
     int id;
-    USERNODE *userList;
     struct roomNode *next;
 } ROOMNODE;
 
@@ -23,5 +23,6 @@ typedef struct msgNode {
 
 ROOMNODE *pushRoom(ROOMNODE *head, int id);
 MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat);
-USERNODE *pushUser(USERNODE *head, int id);
+USERNODE *pushUser(USERNODE *head, int id, int socket);
 ROOMNODE *getRoomByID(ROOMNODE *head, int id);
+USERNODE *getUserByID(USERNODE *head, int id);

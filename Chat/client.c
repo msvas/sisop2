@@ -4,12 +4,14 @@
 
 #define PORT 4000
 
-int sockfd;
+int sockfd, thisID;
 
 int main(int argc, char *argv[])
 {
     struct sockaddr_in serv_addr;
     struct hostent *server;
+
+    thisID = -1;
 
     if (argc < 2) {
 		fprintf(stderr,"usage %s hostname\n", argv[0]);
@@ -61,6 +63,7 @@ int main(int argc, char *argv[])
 int writeSocket(MSG *buffer)
 {
     int n;
+    buffer->userID = thisID;
     n = write(sockfd, buffer, sizeof(MSG));
     if (n < 0) {
         printf("ERROR writing to socket\n");
@@ -74,12 +77,14 @@ int readSocket(MSG *buffer)
 {
     int n;
     int len = 0;
-    n = read(sockfd, buffer, sizeof(MSG));
     ioctl(sockfd, FIONREAD, &len);
+    printf("N: %i\n", len);
     if (len > 0) {
-      //n = read(sockfd, buffer, sizeof(MSG));
+      n = read(sockfd, buffer, sizeof(MSG));
       if (n < 0)
         printf("ERROR reading from socket\n");
+      if(thisID == -1)
+        thisID = buffer->userID;
       return 1;
     }
     return 0;

@@ -12,5 +12,6 @@ typedef struct msgBuffer_t {
     int userID;
     int sent;
     int connected;
+    char userName[20];
     char message[140];
 } MSG;

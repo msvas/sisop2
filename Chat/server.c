@@ -12,30 +12,37 @@ int totalUsers;
 void readMessage(void *argSock) {
     int sendControl, newSock, *auxInt;
     int closeSocket = 0;
+    USERNODE *newUser;
 
     auxInt = (int *) argSock;
     newSock = *auxInt;
 
-    createUser(newSock);
-
+    newUser = createUser(newSock);
+    sprintf(buffer->message, "Welcome, %s! Write /help for commands\n\n", newUser->name);
+    strcpy(buffer->userName, newUser->name);
+    buffer->userID = newUser->id;
+    write(newSock, buffer, sizeof(MSG));
     while(!closeSocket)
     {
       bzero(buffer, sizeof(MSG));
-
+      printf("Fora %i\n", newSock);
       sendControl = read(newSock, buffer, sizeof(MSG));
       if (sendControl < 0)
           error("ERROR reading from socket");
-      //printf("Here is the message: %s, %i\n", buffer->message, buffer->connected);
+      //processMessage();
       sendAllRoom();
-      //write(newSock, buffer, sizeof(MSG));
       if(buffer->connected == -1)
         closeSocket = 1;
-      //userData = push(userData, buffer);
     }
-    //while(buffer->connected);
+
 
     close(newSock);
     pthread_exit(NULL);
+}
+
+void processMessage()
+{
+
 }
 
 void sendAllRoom()
@@ -48,28 +55,30 @@ void sendAllRoom()
   room = user->roomID;
 
   current = userData;
-
-  if(current != NULL)
+  printf("Dentro %i\n", current->socket);
+  while ((current != NULL))
   {
-    while ((current->next != NULL))
+    if(current->roomID == room)
     {
-      if(current->roomID == room)
-      {
-        write(current->socket, buffer, sizeof(MSG));
-        printf("Enviar %i, %s\n", current->socket, buffer->message);
-      }
-      current = current->next;
+      strcpy(buffer->userName, user->name);
+      write(current->socket, buffer, sizeof(MSG));
+      printf("Enviar %i, %s\n", current->socket, buffer->message);
     }
-    bzero(buffer, sizeof(MSG));
+    current = current->next;
   }
+  bzero(buffer, sizeof(MSG));
 }
 
 USERNODE *createUser(int socket)
 {
   USERNODE *newUser;
 
-  userData = pushUser(userData, totalUsers, socket);
+  newUser = pushUser(userData, totalUsers, socket);
+  sprintf(newUser->name, "User%i", newUser->id);
   totalUsers++;
+
+  if(userData == NULL)
+    userData = newUser;
 
   return newUser;
 }
@@ -83,7 +92,7 @@ int main(int argc, char *argv[])
     struct sockaddr_in local, remote;
 
     buffer = malloc(sizeof(MSG));
-    userData = malloc(sizeof(USERNODE));
+    //userData = malloc(sizeof(USERNODE));
     roomsData = malloc(sizeof(ROOMNODE));
     totalUsers = 0;
 

@@ -7,7 +7,7 @@
 USERNODE *userData;
 ROOMNODE *roomsData;
 MSG *buffer;
-int totalUsers;
+int totalUsers, totalRooms;
 
 void readMessage(void *argSock) {
     int sendControl, newSock, *auxInt;
@@ -29,10 +29,12 @@ void readMessage(void *argSock) {
       sendControl = read(newSock, buffer, sizeof(MSG));
       if (sendControl < 0)
           error("ERROR reading from socket");
-      //processMessage();
-      sendAllRoom();
       if(buffer->connected == -1)
-        closeSocket = 1;
+          closeSocket = 1;
+      else {
+        if(!processMessage(newSock))
+          sendAllRoom();
+      }
     }
 
 
@@ -40,9 +42,70 @@ void readMessage(void *argSock) {
     pthread_exit(NULL);
 }
 
-void processMessage()
+int processMessage(int socket)
 {
+  char auxString[20];
+  USERNODE *user;
 
+  if(strstr(buffer->message, "/help") != NULL) {
+    strcpy(buffer->userName, "Help");
+    sprintf(buffer->message, "'/join roomname' - joins a room called 'roomname' \n(creates one if the name does not exist)");
+    write(socket, buffer, sizeof(MSG));
+    strcpy(buffer->userName, "Help");
+    sprintf(buffer->message, "'/username newname' - changes user name to 'newname'");
+    write(socket, buffer, sizeof(MSG));
+    return 1;
+  } else if(strstr(buffer->message, "/join ") != NULL) {
+    strtok(buffer->message, " ");
+    strcpy(auxString, strtok(NULL, " "));
+    if(!joinRoom(auxString)) {
+      createRoom(auxString);
+      strcpy(buffer->userName, "Created room");
+      sprintf(buffer->message, "%s", auxString);
+      write(socket, buffer, sizeof(MSG));
+    } else {
+      strcpy(buffer->userName, "Joined room");
+      sprintf(buffer->message, "%s\nSay hi!", auxString);
+      write(socket, buffer, sizeof(MSG));
+    }
+    return 1;
+  } else if(strstr(buffer->message, "/username ") != NULL) {
+    strtok(buffer->message, " ");
+    strcpy(auxString, strtok(NULL, " "));
+    user = getUserByID(userData, buffer->userID);
+    strcpy(user->name, auxString);
+    strcpy(buffer->userName, "Name changed to");
+    sprintf(buffer->message, "%s", auxString);
+    write(socket, buffer, sizeof(MSG));
+    return 1;
+  }
+  return 0;
+}
+
+int joinRoom(char roomName[20])
+{
+  ROOMNODE *room;
+  USERNODE *user;
+
+  room = getRoomByName(roomsData, roomName);
+  if(room != NULL) {
+    user = getUserByID(userData, buffer->userID);
+    user->roomID = room->id;
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+void createRoom(char roomName[20])
+{
+  ROOMNODE *room;
+  USERNODE *user;
+
+  room = pushRoom(roomsData, totalRooms, roomName);
+  user = getUserByID(userData, buffer->userID);
+  user->roomID = room->id;
+  totalRooms++;
 }
 
 void sendAllRoom()
@@ -93,8 +156,10 @@ int main(int argc, char *argv[])
 
     buffer = malloc(sizeof(MSG));
     //userData = malloc(sizeof(USERNODE));
-    roomsData = malloc(sizeof(ROOMNODE));
     totalUsers = 0;
+    totalRooms = 0;
+    roomsData = pushRoom(roomsData, totalRooms, "");
+    totalRooms++;
 
     for(i = 0; i < 5; i++) {
         threadArgs[i] = malloc(sizeof(int));

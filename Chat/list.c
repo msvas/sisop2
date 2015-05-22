@@ -20,23 +20,31 @@ MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat) {
     return head;
 }
 
-ROOMNODE *pushRoom(ROOMNODE *head, int id) {
+ROOMNODE *pushRoom(ROOMNODE *head, int id, char roomName[20]) {
   ROOMNODE *current;
 
-    if(head == NULL)
+    if(head == NULL) {
         head = malloc(sizeof(ROOMNODE));
+        head->id = id;
+        strcpy(head->name, roomName);
+        head->next = NULL;
+        current = head;
+    }
+    else {
+      current = head;
 
-    current = head;
+      while (current->next != NULL) {
+          current = current->next;
+      }
 
-    while (current->next != NULL) {
-        current = current->next;
+      current->next = malloc(sizeof(ROOMNODE));
+      current->next->id = id;
+      strcpy(current->next->name, roomName);
+      current->next->next = NULL;
+      current = current->next;
     }
 
-    current->next = malloc(sizeof(ROOMNODE));
-    current->next->id = id;
-    current->next->next = NULL;
-
-    return head;
+    return current;
 }
 
 USERNODE *pushUser(USERNODE *head, int id, int socket) {
@@ -97,4 +105,21 @@ USERNODE *getUserByID(USERNODE *head, int id) {
     }
 
     return current;
+}
+
+ROOMNODE *getRoomByName(ROOMNODE *head, char roomName[20]) {
+  ROOMNODE *current;
+
+    if(head == NULL)
+        return NULL;
+
+    current = head;
+
+    while (current != NULL) {
+      if(strcmp(roomName, current->name) == 0)
+        return current;
+      current = current->next;
+    }
+
+    return NULL;
 }

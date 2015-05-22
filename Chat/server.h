@@ -11,4 +11,6 @@
 void readMessage(void *argSock);
 void sendAllRoom();
 USERNODE *createUser(int socket);
-void processMessage();
+int processMessage(int socket);
+int joinRoom(char roomName[20]);
+void createRoom(char roomName[20]);

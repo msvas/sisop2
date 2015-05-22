@@ -3,6 +3,7 @@
 
 MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat, USERNODE *user, ROOMNODE *room); {
   MSGNODE *current;
+  MSG *newMsg;
 
     if(head == NULL)
         head = malloc(sizeof(MSGNODE));
@@ -12,6 +13,8 @@ MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat, USERNODE *user, ROOMNODE *room); {
     while (current->next != NULL) {
         current = current->next;
     }
+
+    memcpy(newMsg, msgChat, sizeof(MSG));
 
     current->next = malloc(sizeof(MSGNODE));
     current->next->msgChat = msgChat;

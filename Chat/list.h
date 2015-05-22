@@ -23,7 +23,7 @@ typedef struct msgNode {
 } MSGNODE;
 
 ROOMNODE *pushRoom(ROOMNODE *head, int id, char roomName[20]);
-MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat);
+MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat, USERNODE *user, ROOMNODE *room);
 USERNODE *pushUser(USERNODE *head, int id, int socket);
 ROOMNODE *getRoomByID(ROOMNODE *head, int id);
 USERNODE *getUserByID(USERNODE *head, int id);

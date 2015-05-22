@@ -1,7 +1,7 @@
 #include "chat.h"
 #include "list.h"
 
-MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat) {
+MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat, USERNODE *user, ROOMNODE *room); {
   MSGNODE *current;
 
     if(head == NULL)

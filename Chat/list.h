@@ -18,12 +18,12 @@ typedef struct roomNode {
 typedef struct msgNode {
     MSG *msgChat;
     USERNODE *user;
-    ROOMNODE *room;
+    int roomID;
     struct msgNode *next;
 } MSGNODE;
 
 ROOMNODE *pushRoom(ROOMNODE *head, int id, char roomName[20]);
-MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat, USERNODE *user, ROOMNODE *room);
+MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat, USERNODE *user, int roomID);
 USERNODE *pushUser(USERNODE *head, int id, int socket);
 ROOMNODE *getRoomByID(ROOMNODE *head, int id);
 USERNODE *getUserByID(USERNODE *head, int id);

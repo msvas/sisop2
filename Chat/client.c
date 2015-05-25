@@ -41,21 +41,6 @@ int main(int argc, char *argv[])
 
     chatInterface(argc, argv, sockfd);
 
-    /*bzero(buffer, sizeof(MSG));
-    fgets(buffer->message, sizeof(buffer->message), stdin);
-
-	n = write(sockfd, buffer, sizeof(MSG));
-    if (n < 0)
-		printf("ERROR writing to socket\n");
-
-	*/
-	/* read from the socket */
-    /*n = read(sockfd, buffer, sizeof(MSG));
-    if (n < 0)
-		printf("ERROR reading from socket\n");
-
-    printf("%s\n", buffer->message);
-    */
 	close(sockfd);
     return 0;
 }

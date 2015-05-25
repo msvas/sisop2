@@ -1,9 +1,11 @@
 #include "chat.h"
 #include "list.h"
 
-MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat, USERNODE *user, ROOMNODE *room); {
+MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat, USERNODE *user, int roomID) {
   MSGNODE *current;
   MSG *newMsg;
+
+    newMsg = malloc(sizeof(MSG));
 
     if(head == NULL)
         head = malloc(sizeof(MSGNODE));
@@ -17,7 +19,9 @@ MSGNODE *pushMsg(MSGNODE *head, MSG *msgChat, USERNODE *user, ROOMNODE *room); {
     memcpy(newMsg, msgChat, sizeof(MSG));
 
     current->next = malloc(sizeof(MSGNODE));
-    current->next->msgChat = msgChat;
+    current->next->msgChat = newMsg;
+    current->next->roomID = roomID;
+    current->next->user = user;
     current->next->next = NULL;
 
     return head;
@@ -74,7 +78,6 @@ USERNODE *pushUser(USERNODE *head, int id, int socket) {
       current->next->roomID = 0;
       current->next->next = NULL;
       current = current->next;
-      //printf("Created user with id %i and socket %i\n", current->next->id, current->next->socket);
     }
 
     return current;
